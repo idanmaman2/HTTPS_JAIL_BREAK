@@ -11,7 +11,13 @@
   7. the flask website will provide control panael as well for the admins that will be able to watch the page and control in all the victimis 
  
  * in the future we will maybe  create ower own singed ssl key so other thief will not steal our data 
-  problems : 
+  --- problems with exploit only on first time hsts websites  with sslstriping only --- : 
     Hsts prload : only big companies has it 
+    
+    our answer : 
+      <img width="399" alt="image" src="https://user-images.githubusercontent.com/90776557/205504601-40678b5b-b20d-49cb-81d7-c9e5c1ac8362.png">
+
+  
   protection : 
+    
     never trust http or pself singed ssl signtures 
