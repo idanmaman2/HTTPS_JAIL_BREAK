@@ -4,6 +4,7 @@
   -1 . open evil twin access point ;-)
   1. get MITM between the victim and the gateway(and if the dns server is on ower network and so posion him too ) .
   2. steal appropriate dns qeueries and ask from (8.8.8.8 ) for the domain and posion the answer to be our flask server 
+  2.5 . cahnge the time with the NTP protocol because of most of browser exploit ...
   3. the flask server will return HTTP 307 error code `307 Temporary Redirect` and in the Location header change a bit to unicode chars that look                 like the alpahbet the uri for example 'a' -> `ą` 
   4. do ssl strip with him - be proxy 
   5. plan in the answers BeEF like tool that we will make that we  will help us to get extra data and steal other stuff 
