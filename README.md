@@ -1,6 +1,7 @@
 # HTTPS_JAIL_BREAK
 # Escape from the HTTPS jail and go to freedom(HTTP) 
 # the plan : 
+  -1 . open evil twin access point ;-)
   1. get MITM between the victim and the gateway(and if the dns server is on ower network and so posion him too ) .
   2. steal appropriate dns qeueries and ask from (8.8.8.8 ) for the domain and posion the answer to be our flask server 
   3. the flask server will return HTTP 307 error code `307 Temporary Redirect` and in the Location header change a bit to unicode chars that look                 like the alpahbet the uri for example 'a' -> `ą` 
