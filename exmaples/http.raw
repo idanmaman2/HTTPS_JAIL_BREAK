@@ -1,0 +1,13 @@
+b'HTTP/1.1 200 OK\r
+nDate: Wed, 28 Dec 2022 21:16:54 GMT\r\n
+Server: Apache/2.4.54 ()\r\n
+Upgrade: h2,h2c\r\n
+Connection: Upgrade, Keep-Alive\r\n
+Last-Modified: Wed, 29 Jun 2022 00:26:43 GMT\r\n
+ETag: "7c-5e28b351ffe27"\r\n
+Accept-Ranges: bytes\r\n
+Content-Length: 124\r\n
+Keep-Alive: timeout=5, max=100\r\n
+Content-Type: image/vnd.microsoft.icon
+\r\n\r\n
+\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x010\x00\x00\x010\x01\x03\x00\x00\x00\n5\xbf\xb0\x00\x00\x00\x06PLTE\xff\xff\xffB\xc0\xfd.*\xd3?\x00\x00\x001IDATh\xde\xed\xca1\r\x00\x00\x08\x030\xfc\x9b\x06\x0b${v\xb4wg_4M\xd34M\xd34M\xd34M\xd3\xb4\xa8\x01\x00\x00\x00\x00\x00\x00\xf49\x04\x0f\x01\xee\x060\xdcP\x00\x00\x00\x00IEND\xaeB`\x82'

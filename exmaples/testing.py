@@ -1,0 +1,2 @@
+import requests
+print(requests.get("https://www.discountbank.co.il/sites/marketing.discountbank.co.il/files/CMS%20media/Personal_Banking/Graphics/new_home_page/Head_Banner_2662X630/commercial_smartloan_banner_2622x630.jpg").text)
