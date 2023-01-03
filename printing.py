@@ -31,3 +31,6 @@ class Printing():
         
     def printWarning(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
         Printing.__printInColor__(*args ,sep =  sep , end = end , color = Color.Yellow)
+        
+    def printNotes(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
+        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Color.Purple)

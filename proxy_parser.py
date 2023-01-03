@@ -3,6 +3,8 @@
 """
 import re
 def parse(page , domainName ): 
-    page = re.sub("https://",lambda match :  f"http://",page ) 
+    page  = page.replace("https://www.","http://vvvvvv.")
+    page = page.replace("https://","http://")
+
     return page 
 

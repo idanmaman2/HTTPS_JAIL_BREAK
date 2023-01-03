@@ -1,3 +1,4 @@
+from printing import Printing
 def banner()->str: 
       FOX ="""
                                         
@@ -79,5 +80,5 @@ def banner()->str:
     
     
     """
-      print(FOX)
+      Printing.printNotes(FOX)
     
