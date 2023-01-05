@@ -1,15 +1,10 @@
-
-
-
 import sys
 #sys.stderr = None
 import platform
 import subprocess
 import getopt
 import banner
-
-import spoofer
-import spoofer
+import spoofing.spoofer as spoofer
 import os 
 from  printing import Printing
 from scapy.all import conf
@@ -18,18 +13,15 @@ ALLOWED_PLATFORMS = ["Darwin","Linux"]
 
 
 def main(verbose: bool ):
-    '''
-           
+    '''     
 	usage: python3 hstsjailbreak.py <target> [-h,--help] [-s,--silent] [-i=,--iface=] 
                     ⛓️  🦊 HSTS JAIL BREAK 🦊 ⛓️
-        mandatory arguments : 
+        mandatory arguments: 
             🧔🏽‍♂️ target - the victim's ip address
 	optional arguments:      
 	    💁 -h,--help show this help message and exit 
 	    🤫 -s,--silent silent or loud mode 
-	    📬 -i,--iface IFACE Interface you wish to use
-   
-              		
+	    📬 -i,--iface IFACE Interface you wish to use       		
 	'''
     
     platformOS = platform.system() 
@@ -91,8 +83,6 @@ def main(verbose: bool ):
             #proxy.StartProxy()
     except Exception as e : 
         Printing.printError(e)
-
-
 
 
 if __name__ == "__main__": 

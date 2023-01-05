@@ -1,14 +1,15 @@
-class Color(): 
-    Red = "\033[0;31m"
-    GREEN = "\033[0;32m"
-    Yellow = "\033[0;33m"
-    BLUE = "\033[0;34m"
-    Purple = "\033[0;35m"
-    Cyan = "\033[0;36m"
-    WHITE ="\033[0;37m"
+
     
     
-class Printing():     
+class Printing():
+    class Color(): 
+        Red = "\033[0;31m"
+        GREEN = "\033[0;32m"
+        Yellow = "\033[0;33m"
+        BLUE = "\033[0;34m"
+        Purple = "\033[0;35m"
+        Cyan = "\033[0;36m"
+        WHITE ="\033[0;37m"     
     
     DefaultColor = Color.WHITE
     
@@ -21,16 +22,16 @@ class Printing():
         Printing.__changeColor__(Printing.DefaultColor)
           
     def printSuccess(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
-        Printing.__printInColor__(*args ,sep =  sep , end = end , color =Color.GREEN)
+        Printing.__printInColor__(*args ,sep =  sep , end = end , color =Printing.Color.GREEN)
         
     def printError(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
-        Printing.__printInColor__(*args ,sep =  sep , end = end , color =Color.Red)
+        Printing.__printInColor__(*args ,sep =  sep , end = end , color =Printing.Color.Red)
         
     def printLog(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
-        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Color.BLUE)
+        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Printing.Color.BLUE)
         
     def printWarning(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
-        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Color.Yellow)
+        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Printing.Color.Yellow)
         
     def printNotes(*args : list  , sep : str = " " , end  : str = "\n" )->None : 
-        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Color.Purple)
+        Printing.__printInColor__(*args ,sep =  sep , end = end , color = Printing.Color.Purple)

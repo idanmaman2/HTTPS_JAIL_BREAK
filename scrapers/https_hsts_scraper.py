@@ -1,6 +1,7 @@
 import requests
 import datetime
 def getHstsHeader(siteName): 
+    ''' get the max age of website '''
     respone = requests.get(siteName)
     hsts = respone.headers.get("Strict-Transport-Security").split(";")
     if "max-age" in hsts[0]: 
