@@ -12,7 +12,7 @@ ALLOWED_PLATFORMS = ["Darwin","Linux"]
 
 
 
-def main(verbose: bool ):
+def main():
     '''     
 	usage: python3 hstsjailbreak.py <target> [-h,--help] [-s,--silent] [-i=,--iface=] 
                     ⛓️  🦊 HSTS JAIL BREAK 🦊 ⛓️
@@ -68,7 +68,7 @@ def main(verbose: bool ):
             print(main.__doc__)
             sys.exit(0)
     try : 
-        if not verbose: 
+        if not arguments["silent"]: 
             banner.banner() 
         #ntp postion right here to 1000 days to the future 
         if os.fork() : 
@@ -86,6 +86,6 @@ def main(verbose: bool ):
 
 
 if __name__ == "__main__": 
-   main(False)
+   main()
     
    
