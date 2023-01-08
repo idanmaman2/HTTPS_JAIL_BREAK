@@ -3,7 +3,7 @@ import sys
 import platform
 import subprocess
 import getopt
-import banner
+import banner as banner
 import spoofing.spoofer as spoofer
 import os 
 from  printing import Printing
@@ -74,9 +74,7 @@ def main():
         if os.fork() : 
             # dad process - runing the spoofer 
             spoofer.HttpDnsSpoofer(arguments["tatget"],arguments["interface"])
-            os.wait()
-
-        
+            Printing.printLog(" <|> ".join(map(str,os.wait())))  
         else : 
             # son process - runing the proxy 
             ...

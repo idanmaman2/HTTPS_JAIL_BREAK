@@ -3,7 +3,7 @@ from flask import request
 import requests
 import os 
 import logging
-from proxy.proxy_parser import parse
+from proxy_parser import parse
 app = Flask(__name__)
 app.config['DEFAULT_CHARSET'] = 'utf-8'
 app.config['WERKZEUG_ENCODING'] = 'utf-8'
@@ -23,7 +23,7 @@ PORT = 80
 @app.route("/",methods = ["GET"])
 def wellcome(): 
     if request.host.removeprefix("http://").startswith("vvvvvv"): 
-        return get_proxy("/")
+        return get_proxy("")
     return """
 <body  style="background-color:blue;">
 <h1   style="color:lightgreen;font-size:75px;text-align: center;" >
@@ -89,7 +89,7 @@ def get_proxy(path):
          os.makedirs(f"{os.getcwd()}/{domain.replace('/','_')}/images/)", exist_ok=True) 
          with open(f"{os.getcwd()}/{domain.replace('/','_')}/images/{path.replace('/','_') if path else 'empty'}" , 'wb') as file : 
              file.write(respone.content)
-         resp =   make_response(respone.content)
+         resp =make_response(respone.content)
          resp.headers.set('Content-Type',respone.headers ["content-type"] )
          resp.headers.set('Content-Disposition', 'attachment', filename=sub_path)
          return resp 
