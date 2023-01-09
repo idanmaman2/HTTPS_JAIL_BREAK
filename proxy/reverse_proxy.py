@@ -38,32 +38,36 @@ def wellcome():
           </body>
           """
           
+          
+          
+          
+          
+          
 @app.route("/",methods = ["POST"])
 @app.route("/<path:path>", methods=['GET', 'POST'])
 def proxy(path):
-    domainName =proxy_utils.cleanHostName(request.host) #get the requested host to reverse proxy 
-    method = request.method #get the method 
-    data = request.form.to_dict() if method == 'POST' else request.args.to_dict() #get the data section for requests 
-    respone = requests.request(method, domainName+path, data = data  , headers= proxy_utils.cleanHeaders(request.headers))
-    print(domainName+path , respone.status_code)
-    returnData = None
-    if "content-encoding" in respone.headers and "gzip" in respone.headers["content-encoding"]:
-     print( "gzipppppp:" , domainName+path)
-     returnData = proxy_utils.unCompressRespone(respone.content)
-     returnData = returnData.decode()
-    elif "content-type" in respone.headers and "image" in respone.headers["content-type"]: #return an Image 
-         print(f"Image {respone.headers['content-type']}" )
-         resp =make_response(respone.content)
-         resp.headers.set('Content-Type',respone.headers ["content-type"] )
-         resp.headers.set('Content-Disposition', 'attachment', filename=path)
-         return resp  
-    else : 
-          returnData = proxy_parser.parse(respone.text,domainName=domainName , path=path)
-    code = respone.status_code
-    print(respone.headers["content-type"])
-    headers = proxy_utils.cleanHeaders(respone.headers)
-   
-    return returnData , code , headers 
+     domainName =proxy_utils.cleanHostName(request.host) #get the requested host to reverse proxy 
+     method = request.method #get the method 
+     data = request.form.to_dict()   #get the data section for requests 
+     parmas = proxy_parser.argsParse(request.args.to_dict(),domainName,path)
+     respone = requests.request(method, domainName+path, data = data  ,params= parmas ,  headers= proxy_utils.cleanHeaders(request.headers,proxy_utils.Way.To))
+     print(domainName+path , respone.status_code , respone)
+     returnData = None
+     if "content-type" in respone.headers and "image" in respone.headers["content-type"]: #return an Image 
+          print(f"Image {respone.headers['content-type']}" )
+          resp =make_response(respone.content)
+          resp.headers.set('Content-Type',respone.headers["content-type"] )
+          resp.headers.set('Content-Disposition', 'attachment', filename=path)
+          return resp  
+     else : 
+               returnData = proxy_parser.parse(respone.text,domainName=domainName , path=path)
+     code = respone.status_code
+     print(respone.headers["content-type"])
+     headers = proxy_utils.cleanHeaders(respone.headers,proxy_utils.Way.From)
+     print(headers)
+     return returnData , code , headers 
+  
+     
 
 if __name__ == '__main__':
     app.run(host=HOST,port=PORT)
