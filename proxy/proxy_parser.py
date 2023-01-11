@@ -35,7 +35,9 @@ def parse(page:bytes , domainName :str , path : str  , pageType : str  ):
         if fileName.endswith(".js"):
             scriptInject: Tag = Tag(name="script")
             scriptInject.attrs['src'] = f"/cybugs/{fileName}"
+            scriptInject.attrs['type']="text/javascript"
+            scriptInject.attrs['charset']="utf-8"
             soup.head.insert(0,scriptInject)
-    page =  soup.prettify('latin-1')
+    page =  soup.prettify()
     return page 
 

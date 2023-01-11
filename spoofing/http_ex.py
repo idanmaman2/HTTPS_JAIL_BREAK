@@ -1,3 +1,4 @@
+import re 
 class HTTP : 
     HTTPSEPERATE = "\r\n"
     HTTPEND = "\r\n\r\n"
@@ -38,4 +39,4 @@ class HTTP :
                 
     def sslStripavailable(self)->bool:
         ''' check if sslstriping can be preformed'''
-        return  self.version["code"] == "301" and "Location" in self.headers
+        return  re.match("30[0-8]",self.version["code"]) and "Location" in self.headers
