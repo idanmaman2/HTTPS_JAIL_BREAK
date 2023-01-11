@@ -23,8 +23,8 @@ def parse(page:bytes , domainName :str , path : str  , pageType : str  ):
 
 
     page =  page.replace("http://","http://vvvvvv.")
+    page = re.sub("https:\/\/([^w])",lambda x :f"http:\/\/vvvvvv.{x.group(1)}",page)
     page  = page.replace("https://www.","http://vvvvvv.")
-    page = page.replace("https://","http://")
     print(pageType)
     if  "text/html" not  in pageType : 
         return page

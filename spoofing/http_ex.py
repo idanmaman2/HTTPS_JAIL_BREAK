@@ -27,13 +27,14 @@ class HTTP :
         ''' return the HTTP object to raw data '''
         return bytes( HTTP.HTTPSEPERATE.join([" ".join(self.version.values())]+[ ":".join(header) for header in  self.headers.items() ])+HTTP.HTTPEND ,encoding="ascii" ) + self.content
     
+
+    
     def __repr__(self) -> str:
         '''printing '''
         return f"""
                 good : { self.version["code"] == "301" } 
-                valid : {self.version}
-                headers : 
-                        {self.headers}
+                version : {self.version}
+                headers : {self.headers}
                 content : {self.content}
                 """
                 
