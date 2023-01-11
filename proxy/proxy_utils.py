@@ -33,15 +33,15 @@ def cleanHostName(hostName : str )->str:
     cleaned = hostName.removeprefix("http://").removeprefix("vvvvvv.")
     return f"https://www.{cleaned}/"
 
-def saveImage(imageContent , imageName , path ):
-    os.makedirs(path , exist_ok=True) 
-    with open(f"{path}/images/{path.replace('/','_') if path else 'empty'}" , 'wb') as file : 
-        file.write(imageContent) 
-def saveVideo(VideoContent , videoName , path ):
-    """ each http packet with the header `video/mp4` is aved with that function into the local computer """
-    os.makedirs(path , exist_ok=True) 
-    with open(f"{path}/videos/{path.replace('/','_') if path else 'empty'}" , 'wb') as file : 
-        file.write(VideoContent) 
+
+
+
+def saveContent(content , contentName , path,typeName ):
+    os.makedirs(f"{path}/out/f{typeName}/" , exist_ok=True) 
+    with open(f"{path}/out/{typeName}/{contentName.replace('/','_') if contentName else 'empty'}" , 'wb') as file : 
+        file.write(content) 
+        
+
 
 
 def cleanCookies(cookies:str): 

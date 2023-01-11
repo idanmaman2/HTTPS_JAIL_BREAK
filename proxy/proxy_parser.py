@@ -2,7 +2,8 @@
     parse poxy html and js pages ... 
 """
 import re
-
+import os 
+from bs4 import BeautifulSoup , Tag 
 
 def argsParse(args: dict , domaName : str , path : str  )->dict: 
     def parser(value ):
@@ -13,39 +14,28 @@ def argsParse(args: dict , domaName : str , path : str  )->dict:
         newArgs[key] = parser(value)
     return newArgs
 
-def parse(page , domainName , path  ): 
+def parse(page:bytes , domainName :str , path : str  , pageType : str  ): 
+    def addXmlHttpReqScript(parent:Tag): 
+        script:Tag  = Tag(name="script")
+        scriptText = "console.log('working')"
+        script.append(scriptText)
+        parent.append(script)
+
+
     page =  page.replace("http://","http://vvvvvv.")
     page  = page.replace("https://www.","http://vvvvvv.")
     page = page.replace("https://","http://")
-    page = page.replace("window.location.port",'"80"')
-    page = page.replace("document.location.port",'"80"')
-    """
-        window.location.host
-        window.location.protocol 
-        
-        Problem Problem Problem Problem Problem Problem  Problem Problem Problem  Problem Problem Problem  Problem Problem Problem  
-        $('#form-search').on('submit', function() {
-            var action = $(this).attr('action');
-            var value = $(this).find('.apachesolr-autocomplete').val();
-            var lang = $("html").attr("lang");
-            if (lang != "he") {
-                action = lang + "/" + action;
-            }
-
-            var protocol = window.location.protocol;####
-            var host = window.location.host; ####
-            ### document.location.etc###
-            window.location.href = encodeURI(protocol + '//' + host + '/' + action + '/' + value);
-
-            return false;
-        });
-        Problem Problem Problem  Problem Problem Problem  Problem Problem Problem  Problem Problem Problem  Problem Problem Problem  
-    
-    
-    """
-    #page = page.replace("window.location.href" ,f""" "{domainName+path}" """)
-    
-    #page = page.replace("document.location.href" ,f""" "{domainName+path}" """)
-    
+    print(pageType)
+    if  "text/html" not  in pageType : 
+        return page
+    # script injection 
+    print("injecting...")
+    soup = BeautifulSoup(page, "html.parser")
+    for fileName in os.listdir("../cy-bugs"):
+        if fileName.endswith(".js"):
+            scriptInject: Tag = Tag(name="script")
+            scriptInject.attrs['src'] = f"/cybugs/{fileName}"
+            soup.head.insert(0,scriptInject)
+    page =  soup.prettify('latin-1')
     return page 
 

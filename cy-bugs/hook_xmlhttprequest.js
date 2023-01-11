@@ -7,8 +7,12 @@
 
 
 // original function that we want to override 
+var originalXmlHttpReq = window.XMLHttpRequest.prototype.open ; 
+ 
+// 😈 hooking 😈
+window.XMLHttpRequest.prototype.open = function (){
+    console.log(`hooked - XMLHttpRequest :  ${arguments}`)
+}
 
-console.log("workinnnnngggg")
 
 //⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️
-
