@@ -10,9 +10,9 @@
 var originalXmlHttpReq = window.XMLHttpRequest.prototype.open ; 
  
 // 😈 hooking 😈
-window.XMLHttpRequest.prototype.open = function (){
-    console.log(`hooked - XMLHttpRequest :  ${arguments}`)
-}
+//window.XMLHttpRequest.prototype.open = function (){
+  //  console.log(`hooked - XMLHttpRequest :  ${arguments}`)
+//}
 
 
 //⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️

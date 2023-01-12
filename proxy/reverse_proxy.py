@@ -54,6 +54,15 @@ def cybugsServe(path):
           response = make_response(script)
           response.status_code = 404 
      return response
+    
+@app.route("/log_api/<path:path>" , methods = ['POST'])  
+def log(path):  
+     print(path)
+     print("cool: ",request.json)
+     print("cool2 : ",request.data)
+     print("cool3 :",request.values)
+     print(request.form.get("logData"))
+     return "",200
                          
 @app.route("/",methods = ["POST"])
 @app.route("/<path:path>", methods=['GET', 'POST'])
@@ -66,7 +75,6 @@ def proxy(path):
      print(domainName+path , respone.status_code , respone)
      returnData = None
      if "content-type" in respone.headers and "image" in respone.headers["content-type"]: #return an Image 
-          print(f"Image {respone.headers['content-type']}" )
           # proxy_utils.saveContent(respone.content,path,os.getcwd(),"image")
           resp =make_response(respone.content)
           resp.headers.set('Content-Type',respone.headers["content-type"] )
@@ -75,9 +83,7 @@ def proxy(path):
      else : 
           returnData = proxy_parser.parse(respone.text,domainName=domainName , path=path,pageType="text/plain" if "content-type" not in respone.headers else  respone.headers["content-type"])
      code = respone.status_code
-     print(respone.headers["content-type"])
      headers = proxy_utils.cleanHeaders(respone.headers,proxy_utils.Way.From)
-     print(headers)
      return returnData , code , headers 
   
      

@@ -15,15 +15,9 @@ def argsParse(args: dict , domaName : str , path : str  )->dict:
     return newArgs
 
 def parse(page:bytes , domainName :str , path : str  , pageType : str  ): 
-    def addXmlHttpReqScript(parent:Tag): 
-        script:Tag  = Tag(name="script")
-        scriptText = "console.log('working')"
-        script.append(scriptText)
-        parent.append(script)
-
-
-    page =  page.replace("http://","http://vvvvvv.")
-    page = re.sub("https:\/\/([^w])",lambda x :f"http://vvvvvv.{x.group(1)}",page)
+    #page = re.sub("http:\/\/([^w])",lambda x :f"http://vvvvvv.{x.group(1)}",page)
+    #page =  page.replace("http://","http://vvvvvv.")
+    #page = re.sub("https:\/\/([^w])",lambda x :f"http://vvvvvv.{x.group(1)}",page)
     page  = page.replace("https://www.","http://vvvvvv.")
     print(pageType)
     if  "text/html" not  in pageType : 
