@@ -7,7 +7,7 @@ def getHstsHeader(siteName):
         respone = requests.get(siteName,timeout=10)
         hsts = respone.headers.get("Strict-Transport-Security")
         if not hsts :
-            raise Exception("Is not Hsts - Error")
+            raise Exception("")
         hsts = hsts.split(";")
         if not hsts : 
             return [datetime.timedelta(seconds= 0) , "no","no"]
