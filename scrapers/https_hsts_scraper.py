@@ -2,12 +2,24 @@ import requests
 import datetime
 def getHstsHeader(siteName): 
     ''' get the max age of website '''
-    respone = requests.get(siteName)
-    hsts = respone.headers.get("Strict-Transport-Security").split(";")
-    if "max-age" in hsts[0]: 
-        hsts[0] =datetime.timedelta(seconds= int(hsts[0].split("=")[1])) 
-    return hsts 
-#print(getHstsHeader("https://www.discountbank.co.il/")[0])
-
+    hsts = None
+    try :
+        respone = requests.get(siteName,timeout=10)
+        hsts = respone.headers.get("Strict-Transport-Security")
+        if not hsts :
+            raise Exception("Is not Hsts - Error")
+        hsts = hsts.split(";")
+        if not hsts : 
+            return [datetime.timedelta(seconds= 0) , "no","no"]
+        if hsts and "max-age" in hsts[0] and "=" in hsts[0] and hsts[0].split("=")[1].isdigit(): 
+                hsts[0] =datetime.timedelta(seconds= int(hsts[0].split("=")[1]))
+        else : 
+            hsts.insert(0,datetime.timedelta(seconds= 0) )
+    except  : 
+      ...
+        
+    if not hsts or isinstance(hsts[0],str) : 
+        return [datetime.timedelta(seconds= 0) , "no","no"]
+    return hsts
 
 

