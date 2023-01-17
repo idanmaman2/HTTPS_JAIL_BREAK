@@ -4,17 +4,9 @@
 import os 
 from bs4 import BeautifulSoup , Tag 
 
-def argsParse(args: dict , domaName : str , path : str  )->dict: 
-    def parser(value ):
-        return value.replace("http","https")
-    newArgs = args.copy()
-    for key,value in newArgs.items() : 
-        print(value)
-        newArgs[key] = parser(value)
-    return newArgs
 
 def parse(page:bytes , domainName :str , path : str  , pageType : str  ): 
-    page  = page.replace("https://","http://")
+    #page  = page.replace("https://","http://")
     print(pageType)
     if  "text/html" not  in pageType : 
         return page

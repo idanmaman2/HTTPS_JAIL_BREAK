@@ -8,7 +8,8 @@ def time() :
     ''' time libary that preforms time travel to the ---> ---> future ---> ---> 
         - the time is in UNIX EPOUCH FORMAT . 
     '''
-    return valid_time.time() \
+    
+    return (valid_time.time() + valid_time.timezone) \
             + (YEARS_TO_TRAVEL * DAY_IN_YEAR + 1) \
             * HOURS_IN_DAY \
             * MINUTES_IN_HOUR \

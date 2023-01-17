@@ -9,9 +9,7 @@ import re
 import time
 import os 
 import proxy_parser 
-from collections import deque
 
-sseStack = deque()
 
 app = Flask(__name__,static_url_path='', 
             static_folder='static',
@@ -65,31 +63,21 @@ def cybugsServe(path):
 @app.route("/log_api/<path:path>" , methods = ['POST'])  
 def log(path):  
      logger.log(level = logging.WARNING ,msg= f"log : {request.data} {path} " )
-     deque.append(f"log : {request.data} {path} " )
      print("loging...")
      return "<p>logged</p>",200
         
-@app.route("/sse/log_api" , methods = ['GET'])  
-def logSSE():  
-    def generateSSE() :
-         while(True): 
-              if sseStack:  
-                    yield sseStack.popleft() 
-              time.sleep(1)
-    return Response(generateSSE(), mimetype='text/event-stream')
-                       
-@app.route("/",methods = ["POST"])
 @app.route("/<path:path>", methods=['GET', 'POST'])
 def proxy(path):
+     logger.log(logging.WARN ,msg =   path )
      domainName =proxy_utils.cleanHostName(request.host) #get the requested host to reverse proxy 
+     logger.log(logging.WARN ,msg = domainName + path )
      method = request.method #get the method 
      data = request.form.to_dict()   #get the data section for requests 
-     parmas = proxy_parser.argsParse(request.args.to_dict(),domainName,path)
+     parmas = request.args.to_dict()
+     respone = requests.request(method, domainName+path , params=parmas,  data= data , headers= proxy_utils.cleanHeaders(request.headers , proxy_utils.Way.To))
      print(domainName+path , respone.status_code , respone)
-     respone = requests.request(method, domainName+path, data = data  ,params= parmas ,  headers= proxy_utils.cleanHeaders(request.headers,proxy_utils.Way.To))
      returnData = None
      if "content-type" in respone.headers and "image" in respone.headers["content-type"]: #return an Image 
-          # proxy_utils.saveContent(respone.content,path,os.getcwd(),"image")
           resp =make_response(respone.content)
           resp.headers.set('Content-Type',respone.headers["content-type"] )
           resp.headers.set('Content-Disposition', 'attachment', filename=path)
