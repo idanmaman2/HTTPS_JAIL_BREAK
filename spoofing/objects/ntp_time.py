@@ -3,9 +3,9 @@ import datetime
 class NtpTime: 
     NTPEPOCH = datetime.datetime(1900, 1, 1, 0, 0, 0)
     UNIXEPOCH = datetime.datetime(1970, 1, 1, 0, 0, 0)
-    def fromRaw(raw:int  ):
-        ''' ctor that gets raw data of NTP date format in int '''
-        raw =raw.to_bytes(8,"big")
+    def fromRaw(raw):
+        ''' factory method that gets raw data of NTP date format in int '''
+        raw =int(raw).to_bytes(8,"big")
         fraction ,secs  = struct.unpack('!II',raw )
         print(secs)
         print(fraction)
@@ -40,4 +40,3 @@ class NtpTime:
        return NtpTime(secs , milisecs)
 
         
-  

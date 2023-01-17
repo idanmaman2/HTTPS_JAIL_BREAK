@@ -9,9 +9,9 @@ class Way(enum.Enum):
 def cleanHeaders(headers : dict , way :Way  )->dict: 
     ''' cleans the headers from unwanted headers '''
     def parserTo(value):
-        return value.replace("http","https").replace("vvvvvv","www")
+        return value.replace("http","https")
     def parserFrom(value):
-         return value.replace("http","https").replace("vvvvvv","www")
+         return value.replace("https","http")
     
     ALLOWED_HEADERS = {"cookie","user-agent","referer",
                        "x-csrf-token","content-type",
@@ -30,8 +30,8 @@ def cleanHeaders(headers : dict , way :Way  )->dict:
 
 def cleanHostName(hostName : str )->str: 
     ''' cleans the spoofed url and returns a valid https orignal hostname '''
-    cleaned = hostName.removeprefix("http://").removeprefix("vvvvvv.")
-    return f"https://www.{cleaned}/"
+    cleaned = hostName.removeprefix("http://")
+    return f"https://{cleaned}/"
 
 
 
