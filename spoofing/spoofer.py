@@ -9,6 +9,7 @@ from spoofing.http_ex  import HTTP
 from  utils.printing import Printing
 import re
 from enum import Enum
+from spoofing.ntp_time import NtpTime
 ntpSpoofed = False 
 class DNSMode(Enum):
     NtpSpoofed = 0 
@@ -87,6 +88,13 @@ def throworkill(packet:Ether,routerMac:str , dnsMac:str ,spoofedIp :str ,  inter
             packet = et/ip/tcp/raw
         elif NTP in packet : 
             packet.show()
+            ntime = NtpTime.fromRaw(int(packet[NTP].recv))
+            print(ntime.secs)
+            print(ntime.fraction)
+            print(NtpTime.convertUnixTONtpDate(time.time()))
+            print(int(ntime))
+            print(float(ntime))
+            print(bytes(ntime))
         
         
         
