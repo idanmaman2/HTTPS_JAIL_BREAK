@@ -11,7 +11,7 @@ out/
 *.json 
 test_files/
 # html 
-*.html
+#*.html
 
 # C extensions
 *.so

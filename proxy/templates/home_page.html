@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
+    </head>
+    <body >
+        
+        <nav>
+            <div class="nav nav-tabs" id="nav-tab" role="tablist">
+              <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">Home</button>
+
+              <button  class="nav-link " id="nav-plots-tab" data-bs-toggle="tab" data-bs-target="#nav-plots" type="button" role="tab" aria-controls="nav-plots" aria-selected="false">Plots</button>
+
+              <button  class="nav-link " id="nav-logs-tab" data-bs-toggle="tab" data-bs-target="#nav-logs" type="button" role="tab" aria-controls="nav-logs" aria-selected="false">Logs</button>
+            
+            </div>
+          </nav>
+
+          <div style="height:100vh;"  class="tab-content" id="nav-tabContent">
+            
+            <div  style="height:100vh;" class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab" tabindex="0">
+                <h1> HTTPS JAIL BREAK</h1>
+
+                
+             
+
+            </div>
+            
+            <div style="height:100vh;"  class="tab-pane fade" id="nav-plots" role="tabpanel" aria-labelledby="nav-plots-tab" tabindex="0">
+                <iframe style="width:100%;height:100%;" src="/plots" title="plots"></iframe> 
+            </div>
+
+
+            <div style="height:100vh;"  class="tab-pane fade" id="nav-logs" role="tabpanel" aria-labelledby="nav-logs-tab" tabindex="0">
+               <p>logs<p>
+            </div>
+
+
+
+            <div id="warningWindow" style = "position: fixed;bottom: 0; width : 100%;" class="card">
+                <div style = "width:100%;" class="card-header">
+                    <button onclick="hide()"><span class="fa fa-window-close"></span></button>
+                  <div  style="text-align: center;color:yellow;font-weight:bold;font-size:30px;text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;">NOTE</div>
+                </div>
+                <div  style = "width:100%;" class="card-body">
+                  <blockquote class="blockquote mb-0">
+                    <p style="font-size:20;">📛FOR EDUCATIONAL(👨‍🏫) PURPOSES ONLY - THERE IS NO WARRANTY📛</p>
+                    <footer class="blockquote-footer">Created by Idan.M </footer>
+                  </blockquote>
+                </div>
+              </div>
+         
+            </div>
+          <script>
+            function hide() {
+              document.getElementById("warningWindow").style.display = "none";;
+            }
+            </script>
+    </body>
+</html>

