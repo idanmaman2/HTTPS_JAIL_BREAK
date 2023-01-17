@@ -15,18 +15,23 @@ class NtpTime:
         '''set NTP_Time from secs and fraction '''
         self.fraction = fraction
         self.secs = secs 
-    
+        
     def __bytes__(self) : 
         ''' converts the value to bytes '''
         return struct.pack("!II", self.fraction , self.secs)
+    
     def __int__(self): 
         '''converts the value to int  '''
         return self.secs 
+    
     def __float__(self): 
         '''converts the value to float  '''
         return self.secs + self.fraction * 10 ** -(len(str(self.fraction))) 
+    
     def __repr__(self) : 
+        ''' printing method '''
         return f"""secs : {self.secs} , fraction : {self.fraction} """
+    
     def convertUnixTONtpDate(EpochTime:int):
        ''' gets UNIX epoch (can be get by time.time())  and  converts it to NTP EPOCH '''
        diffUnixAndNtp =  datetime.datetime.fromtimestamp(EpochTime) - NtpTime.NTPEPOCH
