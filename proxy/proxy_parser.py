@@ -1,12 +1,24 @@
 """
     parse poxy html and js pages ... 
 """
+import re
 import os 
 from bs4 import BeautifulSoup , Tag 
 
+def argsParse(args: dict , domaName : str , path : str  )->dict: 
+    def parser(value ):
+        return value.replace(f"vvvvvv.{domaName}" , f"{domaName}").replace("http","https")
+    newArgs = args.copy()
+    for key,value in newArgs.items() : 
+        print(value)
+        newArgs[key] = parser(value)
+    return newArgs
 
 def parse(page:bytes , domainName :str , path : str  , pageType : str  ): 
-    #page  = page.replace("https://","http://")
+    page = re.sub("http:\/\/([^w])",lambda x :f"http://vvvvvv.{x.group(1)}",page)
+    page =  page.replace("http://www.","http://vvvvv.")
+    page = re.sub("https:\/\/([^w])",lambda x :f"http://vvvvvv.{x.group(1)}",page)
+    page  = page.replace("https://www.","http://vvvvv.")
     print(pageType)
     if  "text/html" not  in pageType : 
         return page
@@ -25,4 +37,3 @@ def parse(page:bytes , domainName :str , path : str  , pageType : str  ):
                 soup.head.insert(0,scriptInject)
     page =  soup.prettify()
     return page 
-

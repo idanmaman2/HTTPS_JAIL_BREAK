@@ -19,7 +19,7 @@ def validateDNS(packet:DNS)->bool:
   
     try: 
         name : str  = packet[DNSQR].qname.decode()[:-1]
-        return  DNSQR in packet and isSpoofed(name)
+        return DNSQR in packet and packet[DNSQR].qname.decode().removeprefix('https://').startswith("vvvvvv.")
     except: 
         ...
     if DNSQR in packet : 
