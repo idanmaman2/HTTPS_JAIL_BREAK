@@ -11,6 +11,8 @@ All of the tool features - all in one tool : - the first tool that provide all o
       * ntp MITM spoofer
   * reverse proxy 
   * chrome time packet droper - client2.google.com/time/1/current
+  * javascript code injector 
+    * supports costum code - just drpp it into the cy-bugs folder 
   * multi color printing 
 
 
